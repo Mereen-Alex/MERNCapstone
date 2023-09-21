@@ -114,7 +114,9 @@ Table of Contents
    Open your web browser's developer tools and navigate to the "Application" or "Storage" tab, depending on your browser. Look for the cookies associated with your application's domain. You should see a cookie named token. 
 
    As a demo, use the following email and password.
-    email: ivy@parkvill.com  password: ivy25pa!2
+   
+    email: ivy@parkvill.com 
+    password: ivy25pa!2
 
     Browsing Cakes
    . Upon visiting the website, users can browse a variety of cakes.
