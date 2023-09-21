@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useContext} from "react";
 import { useNavigate } from "react-router-dom";
+import { CartContext } from "../../CartContext";
 import axios from "../../api/axiosConfig";
 import { useCookies } from "react-cookie";
 import Button from "@mui/material/Button";
@@ -7,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 const Logout = () => {
+  const {checkout} = useContext(CartContext);
   const navigate = useNavigate();
   const [cookies, , removeCookie] = useCookies(["jwt"]);
 
@@ -16,6 +18,7 @@ const Logout = () => {
 
       localStorage.removeItem("user");
       removeCookie("jwt");
+      checkout();
 
       navigate("/");
     } catch (error) {

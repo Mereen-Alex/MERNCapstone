@@ -18,7 +18,7 @@ export const register = async (registerData) => {
 };
 
 export const logout = async () => {
-  localStorage.removeItem("user");  
+  localStorage.removeItem("user");    
 };
 
 export const updateProfile = async (user) => {

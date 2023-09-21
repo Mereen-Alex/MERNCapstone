@@ -6,30 +6,30 @@ import { styled } from "@mui/material/styles";
 import { Container, Typography, Divider, Button, Paper } from "@mui/material";
 
 const CartDetailsView = () => {
-  const { cartItems } = useContext(CartContext);
+  const { cartItems, getTotalCost } = useContext(CartContext);
 
   const selectedItems = Object.keys(cartItems).map((pid) => {
     const cartItem = cartItems[pid];
     const itemData = getCakeData(pid);
 
-    const itemPrice = parseFloat(itemData.price);
-    const itemQuantity = cartItem.quantity;
-    const totalPrice = itemPrice * itemQuantity;
+    const sizeIndex = itemData.sizes.indexOf(cartItem.size);
+    const selectedPrice =
+      sizeIndex !== -1 ? parseFloat(itemData.price[sizeIndex]) : 0;
+
+    const totalPrice = selectedPrice * cartItem.quantity;
 
     return {
       ...cartItem,
       pid,
       image: itemData.image,
       name: itemData.name,
-      price: totalPrice,
+      price: totalPrice.toFixed(2),
     };
   });
 
   console.log("Selected Items:", selectedItems);
 
-  const subtotal = selectedItems.reduce((acc, item) => {
-    return acc + item.price;
-  }, 0);
+  const subtotal = getTotalCost();
 
   const gstRate = 0.18;
   const shippingCharges = 25;
@@ -88,7 +88,7 @@ const CartDetailsView = () => {
                   Size: {item.size}, Quantity: {item.quantity}
                 </Typography>
                 <Typography variant="body2">
-                  Price: INR. {(item.price * item.quantity).toFixed(2)}
+                  Price: INR {item.price}
                 </Typography>
               </ItemDetails>
             </ItemContainer>
