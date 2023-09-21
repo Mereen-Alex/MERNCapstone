@@ -1,17 +1,31 @@
 import React, { useContext, useEffect } from "react";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { Box, Link as MUILink } from "@mui/material";
+import UserContext from "../../UserContext";
 import { CartContext } from "../../CartContext";
 import CartBadge from "../cart/CartBadge";
 
 const Navbar = () => {
+  const { user, logout } = useContext(UserContext);
   const { getCartItemsCount } = useContext(CartContext);
+  const navigate = useNavigate();
 
   const cartItemsCount = getCartItemsCount();
 
   useEffect(() => {
     console.log("cartItemsCount:", cartItemsCount);
   }, [cartItemsCount]);
+
+  const handleLogout = async () => {
+    try {
+      await logout(); 
+      navigate("/logout");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
   return (
     <div>
@@ -44,12 +58,26 @@ const Navbar = () => {
             Contact
           </Button>
 
-          <Button color="inherit" component={Link} to="/login">
-            Login
-          </Button>
-          <Button color="inherit" component={Link} to="/logout">
-            Logout
-          </Button>
+          {user ? (
+             <Box display="flex" alignItems="center">
+             <MUILink color="inherit" component={Link} to="/profile">
+               {user.username}
+             </MUILink>
+             <Box display="flex" flexDirection="column" marginLeft={1}>
+               <MUILink color="inherit" component={Link} to="/profile">
+                 My Profile
+               </MUILink>
+               <MUILink color="inherit" component={Link} to="/orders">
+                 My Orders
+               </MUILink>
+               <MUILink color="inherit" onClick={handleLogout}>Logout</MUILink>
+             </Box>
+           </Box>
+          ) : (
+            <Button color="inherit" component={Link} to="/login">
+              Login
+            </Button>
+          )}
 
           {cartItemsCount && <CartBadge cartItemsCount={cartItemsCount} />}
         </Toolbar>

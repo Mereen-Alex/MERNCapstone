@@ -17,7 +17,7 @@ const Logout = () => {
       localStorage.removeItem("user");
       removeCookie("jwt");
 
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Logout failed", error);
     }
@@ -43,7 +43,7 @@ const Logout = () => {
         onClick={handleLogout}
         size="large"
       >
-        Login
+        Home
       </Button>
       <Typography variant="body2" style={{ marginTop: "1rem" }}>
         Continue shopping{" "}

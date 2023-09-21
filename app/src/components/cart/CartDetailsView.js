@@ -1,73 +1,122 @@
 import React, { useContext } from "react";
 import { CartContext } from "../../CartContext";
 import { Link } from "react-router-dom";
-import {
-  Container,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Button,
-  Paper,
-} from "@mui/material";
-import CartItemList from "./CartItemList";
+import { getCakeData } from "../../cakesdb";
+import { styled } from "@mui/material/styles";
+import { Container, Typography, Divider, Button, Paper } from "@mui/material";
 
 const CartDetailsView = () => {
   const { cartItems } = useContext(CartContext);
 
-  const calculateTotal = () => {
-    const gstRate = 0.18;
-    const shippingCharges = 25;
+  const selectedItems = Object.keys(cartItems).map((pid) => {
+    const cartItem = cartItems[pid];
+    const itemData = getCakeData(pid);
 
-    if (!cartItems || cartItems.length === 0) {
-      return 0;
-    }
+    const itemPrice = parseFloat(itemData.price);
+    const itemQuantity = cartItem.quantity;
+    const totalPrice = itemPrice * itemQuantity;
 
-    return (
-      cartItems.reduce((total, item) => {
-        const itemPrice = parseFloat(item.price);
-        const itemQuantity = item.quantity;
-        const itemSubtotal = itemPrice * itemQuantity * (1 + gstRate);
+    return {
+      ...cartItem,
+      pid,
+      image: itemData.image,
+      name: itemData.name,
+      price: totalPrice,
+    };
+  });
 
-        return total + itemSubtotal;
-      }, 0) + shippingCharges
-    );
-  };
+  console.log("Selected Items:", selectedItems);
+
+  const subtotal = selectedItems.reduce((acc, item) => {
+    return acc + item.price;
+  }, 0);
+
+  const gstRate = 0.18;
+  const shippingCharges = 25;
+  const gstAmount = subtotal * gstRate;
+  const totalAmount = subtotal + gstAmount + shippingCharges;
+
+  const OrderContainer = styled("div")({
+    textAlign: "left",
+    marginBottom: "24px",
+    paddingTop: "16px",
+  });
+
+  const Image = styled("img")({
+    width: "80px",
+    marginRight: "16px",
+  });
+
+  const ItemContainer = styled("div")({
+    display: "flex",
+    alignItems: "center",
+    marginBottom: "16px",
+  });
+
+  const ItemDetails = styled("div")({
+    flexGrow: 1,
+  });
+
+  const SubtotalContainer = styled("div")({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "16px",
+  });
+
+  const TotalContainer = styled("div")({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  });
 
   return (
-    <Container maxWidth="sm" style={{ marginTop: "64px" }}>
+    <Container maxWidth="md" style={{ marginTop: "64px" }}>
       <Paper elevation={3} style={{ padding: "20px", textAlign: "center" }}>
         <Typography variant="h5" gutterBottom>
-          Your Cart
+          Your Order
         </Typography>
-        <CartItemList />
-        <List>
-          {cartItems &&
-            cartItems.map((item) => (
-              <div key={item.pid}>
-                <ListItem>
-                  <ListItemText
-                    primary={item.name}
-                    secondary={`Quantity: ${item.quantity}, Size: ${item.size}`}
-                  />
-                  <Typography>
-                    Rs.{" "}
-                    {(
-                      parseFloat(item.price) *
-                      item.quantity *
-                      (1 + 0.18)
-                    ).toFixed(2)}
-                  </Typography>
-                </ListItem>
-                <Divider />
-              </div>
-            ))}
-        </List>
-        <Typography variant="h6" gutterBottom>
-          Total (including GST and shipping charges): Rs.{" "}
-          {calculateTotal().toFixed(2)}
-        </Typography>
+
+        {selectedItems.map((item) => (
+          <OrderContainer key={item.pid}>
+            <Image src={item.image} alt={item.name} />
+            <ItemContainer>
+              <ItemDetails>
+                <Typography variant="body1">
+                  {item.name}
+                  <br />
+                  Size: {item.size}, Quantity: {item.quantity}
+                </Typography>
+                <Typography variant="body2">
+                  Price: INR. {(item.price * item.quantity).toFixed(2)}
+                </Typography>
+              </ItemDetails>
+            </ItemContainer>
+          </OrderContainer>
+        ))}
+
+        <Divider style={{ margin: "16px 0" }} />
+
+        <SubtotalContainer>
+          <Typography variant="body2">Subtotal:</Typography>
+          <Typography variant="body2">INR. {subtotal.toFixed(2)}</Typography>
+        </SubtotalContainer>
+        <SubtotalContainer>
+          <Typography variant="body2">GST @18%:</Typography>
+          <Typography variant="body2">INR. {gstAmount.toFixed(2)}</Typography>
+        </SubtotalContainer>
+        <SubtotalContainer>
+          <Typography variant="body2">Shipping:</Typography>
+          <Typography variant="body2">INR. {shippingCharges}</Typography>
+        </SubtotalContainer>
+
+        <Divider style={{ margin: "16px 0" }} />
+
+        <TotalContainer>
+          <Typography variant="h6">Total (including taxes):</Typography>
+          <Typography variant="h6">INR. {totalAmount.toFixed(2)}</Typography>
+        </TotalContainer>
+
         <Button
           variant="contained"
           color="primary"
@@ -77,7 +126,7 @@ const CartDetailsView = () => {
           Proceed to Checkout
         </Button>
         <Button
-          sx={{ marginTop: 0, borderRadius: 3 }}
+          sx={{ marginTop: 2, borderRadius: 3 }}
           component={Link}
           to="/login"
         >

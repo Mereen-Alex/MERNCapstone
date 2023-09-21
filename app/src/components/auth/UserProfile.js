@@ -1,6 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/axiosConfig";
 import {
@@ -16,13 +17,6 @@ const validationSchema = yup.object({
   fullname: yup.string().required("Full name is required"),
   username: yup.string().required("Username is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup
-    .string("Enter your password")
-    .min(8, "Password should be of minimum 8 characters length")
-    .matches(
-      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/
-    )
-    .required("Password is required"),
   phonenumber: yup.string("").required("Phone number is required"),
   address: yup.string().required("Address is required"),
   isAdmin: yup.boolean(),
@@ -36,16 +30,25 @@ const UserProfile = () => {
       username: "",
       phonenumber: "",
       email: "",
-      address: "",
-      password: "",
+      address: {
+        addressLine1: "",
+        street: "",
+        city: "",
+        state: "",
+        pinCode: "",
+        country: "",
+      },
       isAdmin: false,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        const response = await axios.post("http://localhost:5000/api/users/profile", values);
+        const response = await axios.post(
+          "http://localhost:5000/api/users/profile",
+          values
+        );
         console.log("Form successfully submitted!");
-
+        toast.success("Profile form submitted successfully!");
         console.log(response.data);
 
         navigate("/");
@@ -103,21 +106,7 @@ const UserProfile = () => {
             error={formik.touched.username && Boolean(formik.errors.username)}
             helperText={formik.touched.username && formik.errors.username}
           />
-          <TextField
-            fullWidth
-            style={{ margin: "4px 0" }}
-            margin="normal"
-            id="password"
-            name="password"
-            label="Password:"
-            type="password"
-            autoComplete="current-password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password && formik.errors.password}
-          />
+
           <TextField
             fullWidth
             style={{ margin: "4px 0" }}
@@ -143,7 +132,9 @@ const UserProfile = () => {
             value={formik.values.phonenumber}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.phonenumber && Boolean(formik.errors.phonenumber)}
+            error={
+              formik.touched.phonenumber && Boolean(formik.errors.phonenumber)
+            }
             helperText={formik.touched.phonenumber && formik.errors.phonenumber}
           />
           <TextField
@@ -276,8 +267,8 @@ const UserProfile = () => {
             labelPlacement="start"
             sx={{
               display: "flex",
-              alignItems: "center", 
-              justifyContent: "space-between", 
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           />
 

@@ -6,131 +6,132 @@ import {
   Container,
   Typography,
   List,
-  ListItem,
-  ListItemText,
+  ListItem,  
   ListItemSecondaryAction,
   IconButton,
   Button,
   Paper,
-  Box,
+  Box,  
+  CardContent,
+  CardMedia,
+  Grid,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 
 const CartItemList = () => {
-  const { cartItems } = useContext(CartContext);
-
   const {
+    cartItems,
     removeFromCart,
     getCartItemsCount,
     getTotalCost,
     updateItemsCount,
   } = useContext(CartContext);
 
-  const cartItemsArray = Array.from(Object.values(cartItems));
-
   return (
-    <Container maxWidth="sm" style={{ marginTop: "64px" }}>
-      <Paper elevation={3} style={{ padding: "20px", textAlign: "center" }}>
+    <Container maxWidth="md" style={{ marginTop: "64px" }}>
+      <Paper elevation={3} style={{ padding: "20px" }}>
         <Typography variant="h5" gutterBottom>
-          What's in your Cart?
+          Your Cart
         </Typography>
-        {cartItemsArray.length === 0 ? (
+        {Object.keys(cartItems).length === 0 ? (
           <Typography variant="body1">
-            Cart Empty? Let's Change That with Cake Delights!
+            Your shopping cart is currently empty.
           </Typography>
         ) : (
           <List>
-            {cartItemsArray.map((cartItem) => {
-              const { pid, quantity, size } = cartItem;
+            {Object.keys(cartItems).map((pid) => {
+              const cartItem = cartItems[pid];
               const cakeData = getCakeData(pid);
 
-              console.log("Current pid:", pid);
-
-              if (pid === undefined || cakeData === undefined) {
+              if (!cakeData) {
                 return null;
               }
 
-              if (!cakeData) {
-                return (
-                  <ListItem key={pid}>
-                    <ListItemText
-                      primary={`Product not found`}
-                      secondary={`Quantity: ${quantity}, Size: ${size}, Price: 0`}
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        edge="end"
-                        aria-label="delete"
-                        onClick={() => removeFromCart(pid)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                );
-              }
-              console.log("Cake data for pid:", pid, "is", cakeData);
+              const sizeIndex = cakeData.sizes.indexOf(cartItem.size);
+              const selectedPrice =
+                sizeIndex !== -1 ? parseFloat(cakeData.price[sizeIndex]) : 0;
+
               return (
                 <ListItem key={pid}>
-                  <ListItemText
-                    primary={cakeData.name}
-                    secondary={`Quantity: ${quantity}, Size: ${size}, Price: ${
-                      (cakeData.price[cakeData.sizes.indexOf(size)] || 0) *
-                      quantity
-                    }`}
-                  />
+                  <Grid container spacing={2}>
+                    <Grid item xs={4}>
+                      <CardMedia
+                        component="img"
+                        height="100"
+                        image={cakeData.image}
+                        alt={cakeData.name}
+                      />
+                    </Grid>
+                    <Grid item xs={8}>
+                      <CardContent>
+                        <Typography variant="h6">{cakeData.name}</Typography>
+                        <Typography variant="body2">
+                          Size: {cartItem.size}, Price: Rs.
+                          {(selectedPrice * cartItem.quantity).toFixed(2)}
+                        </Typography>
+                        <Box display="flex" alignItems="center" marginTop={2}>
+                          <Typography variant="body2">Quantity:</Typography>
+                          <IconButton
+                            edge="end"
+                            aria-label="decrease"
+                            onClick={() =>
+                              updateItemsCount(
+                                cartItem.quantity > 1 ? cartItem.quantity - 1 : 1,
+                                pid
+                              )
+                            }
+                          >
+                            <RemoveIcon />
+                          </IconButton>
+                          <Typography
+                            variant="body2"
+                            style={{ marginLeft: "8px" }}
+                          >
+                            {cartItem.quantity}
+                          </Typography>
+                          <IconButton
+                            edge="end"
+                            aria-label="increase"
+                            onClick={() =>
+                              updateItemsCount(cartItem.quantity + 1, pid)
+                            }
+                          >
+                            <AddIcon />
+                          </IconButton>
+                        </Box>
+                      </CardContent>
+                    </Grid>
+                  </Grid>
                   <ListItemSecondaryAction>
                     <IconButton
                       edge="end"
                       aria-label="delete"
-                      onClick={() => removeFromCart(pid)}
+                      onClick={() => removeFromCart(pid, cartItem.size)}
                     >
                       <DeleteIcon />
                     </IconButton>
-                    <Box display="flex" alignItems="center">
-                      <IconButton
-                        edge="end"
-                        aria-label="decrease"
-                        onClick={() => updateItemsCount(quantity - 1, pid)}
-                      >
-                        <RemoveIcon />
-                      </IconButton>
-                      <input
-                        value={quantity}
-                        onChange={(e) =>
-                          updateItemsCount(Number(e.target.value), pid)
-                        }
-                      />
-                      <IconButton
-                        edge="end"
-                        aria-label="increase"
-                        onClick={() => updateItemsCount(quantity + 1, pid)}
-                      >
-                        <AddIcon />
-                      </IconButton>
-                    </Box>
                   </ListItemSecondaryAction>
                 </ListItem>
               );
             })}
           </List>
         )}
-        <p>GST & other charges will be shown at Checkout.</p>
+        <p>GST & other charges calculated at Checkout.</p>
         <Button
           variant="contained"
           color="primary"
           component={Link}
           to="/cartdetails"
         >
-          Confirm your Purchase
+          Confirm Your Purchase
         </Button>
         <Typography variant="h6" gutterBottom>
           Total Items: {getCartItemsCount()}
         </Typography>
         <Typography variant="h6" gutterBottom>
-          Total Cost: ${getTotalCost().toFixed(2)}
+          Total Cost: Rs.{getTotalCost().toFixed(2)}
         </Typography>
       </Paper>
     </Container>

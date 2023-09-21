@@ -31,44 +31,39 @@ export const CartProvider = ({ children }) => {
   };
 
   const getItemQuantity = (pid) => {
-    const quantity = cartItems[pid] || 0;
-    return quantity;
+    const item = cartItems[pid];
+    return item ? item.quantity : 0;
   };
 
-  const updateItemsCount = (newAmount, cartItemId) => {
-    setCartItems((prevCartItems) => ({
-      ...prevCartItems,
-      [cartItemId]: newAmount,
-    }));
+  const updateItemsCount = (newAmount, pid) => {
+    setCartItems((prevCartItems) => {
+      const updatedCartItems = { ...prevCartItems };
+      if (updatedCartItems[pid]) {
+        updatedCartItems[pid].quantity = newAmount;
+      }
+      return updatedCartItems;
+    });
   };
 
   const addToCart = (pid, selectedSize) => {
     setCartItems((prevCartItems) => {
-      const updatedCartItems = { ...prevCartItems };
-
-      if (updatedCartItems[pid]) {
-        updatedCartItems[pid].quantity += 1;
-        updatedCartItems[pid].size = selectedSize;
+      const existingCartItem = prevCartItems[pid];
+      if (existingCartItem) {
+        existingCartItem.quantity += 1;
       } else {
-        updatedCartItems[pid] = { quantity: 1, size: selectedSize };
+        prevCartItems[pid] = {
+          size: selectedSize,
+          quantity: 1,
+        };
       }
-
-      console.log("Updated cartItems:", updatedCartItems);
-
-      return updatedCartItems;
+      return { ...prevCartItems }; // Create a new object to trigger a re-render
     });
   };
 
   const removeFromCart = (pid) => {
     setCartItems((prevCartItems) => {
       const updatedCartItems = { ...prevCartItems };
-      
-      if (updatedCartItems[pid] && updatedCartItems[pid].quantity > 0) {
-        updatedCartItems[pid].quantity -= 1;
-      }
-      if (updatedCartItems[pid] && updatedCartItems[pid].quantity === 0) {
-        delete updatedCartItems[pid];
-      }
+      delete updatedCartItems[pid];
       return updatedCartItems;
     });
   };
@@ -79,11 +74,10 @@ export const CartProvider = ({ children }) => {
       if (cartItems.hasOwnProperty(pid)) {
         const { quantity, size } = cartItems[pid];
         const cakeData = getCakeData(pid);
+
         if (cakeData && cakeData.sizes.includes(size)) {
           const sizeIndex = cakeData.sizes.indexOf(size);
           const selectedPrice = parseFloat(cakeData.price[sizeIndex]);
-
-          // const sizeInKg = size.replace(/ g/, "");
 
           totalCost += selectedPrice * quantity;
         } else {
