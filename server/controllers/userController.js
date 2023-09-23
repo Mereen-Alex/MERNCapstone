@@ -4,52 +4,67 @@ import generateToken from "../utils/generateToken.js";
 import bcrypt from "bcryptjs";
 
 // POST:  /api/users
-const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+const registerUser = asyncHandler(async (req, res, next) => {
+  try {
+    const { username, email, password } = req.body;
 
-  const userExists = await User.findOne({ email });
-  if (userExists) {
-    res.status(400);
-    throw new Error("User already exists");
-  }
-  const salt = await bcrypt.genSalt(10);
-  const hashedpassword = await bcrypt.hash(password, salt);
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      res.status(400).json({ message: "User already exists, please Login!" });
+      return;
+    }
 
-  const user = await User.create({
-    username,
-    email,
-    password: hashedpassword,
-  });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-  if (user) {
-    res.status(201).json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      token: generateToken(user._id),
+    const user = await User.create({
+      username,
+      email,
+      password: hashedPassword,
     });
-  } else {
-    res.status(400);
-    throw new Error("Invalid user data");
+
+    const token = generateToken(user._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+      expires: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days
+    });
+
+    res
+      .status(201)
+      .json({ message: "User registered successfully", success: true, user });
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 
 //  /api/users/login
-const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  console.log("Login Request Data:", req.body);
+const loginUser = asyncHandler(async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    console.log("Login Request Data:", req.body);
 
-  const user = await User.findOne({ email });
-  console.log("Retrieved User:", user);
 
-  if (user && (await bcrypt.compare(password, user.password))) {
-    console.log("Password Matched!");
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: "Incorrect password or email" });
+    }
+    console.log("Retrieved User:", user);
 
-    const token = generateToken(user);
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatch) {
+      return res.status(401).json({ message: "Incorrect password or email" });
+    }
+
+    const token = generateToken(user._id);
 
     res.cookie("jwt", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV !== "development", // means production: true
+      secure: process.env.NODE_ENV !== "development",
       sameSite: "strict",
       expires: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days
     });
@@ -60,10 +75,9 @@ const loginUser = asyncHandler(async (req, res) => {
       email: user.email,
       token: token,
     });
-  } else {
-    console.log("Password Mismatch!");
-    res.status(401);
-    throw new Error("Invalid email or password");
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 

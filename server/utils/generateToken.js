@@ -8,11 +8,3 @@ const generateToken = (userId) => {
 };
 
 export default generateToken;
-
-
- 
-
-
-
-
-

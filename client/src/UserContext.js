@@ -12,6 +12,10 @@ export const UserContext = createContext(null);
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
+  const updateUser = (userData) => {
+    setUser(userData);
+  };
+
   const login = async (email, password) => {
     try {
       const userData = await loginUser(email, password);
@@ -56,7 +60,7 @@ export const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, login, register, logout, updateProfile }}
+      value={{ user, updateUser, login, register, logout, updateProfile }}
     >
       {children}
     </UserContext.Provider>

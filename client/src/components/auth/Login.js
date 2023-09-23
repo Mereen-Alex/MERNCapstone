@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, {useContext, useEffect } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../../api/axiosConfig";
 import { useCookies } from "react-cookie";
 import { Box, Button, TextField } from "@mui/material";
+import { UserContext } from "../../UserContext";
 
 const validationSchema = yup.object({
   email: yup.string("Enter your email").required("Email is required"),
@@ -15,6 +16,7 @@ const validationSchema = yup.object({
 });
 
 const Login = () => {
+  const { updateUser } = useContext(UserContext);
   const [cookies, setCookie] = useCookies(["jwt"]);
   const navigate = useNavigate();
 
@@ -32,7 +34,7 @@ const Login = () => {
             email: values.email,
             password: values.password,
           }
-        );
+        );        
 
         if (response.data && response.data.token) {
           setCookie("jwt", response.data.token, { path: "/" });
@@ -40,12 +42,14 @@ const Login = () => {
           localStorage.setItem("user", JSON.stringify(response.data));
           console.log("Login success!");
 
+          updateUser(response.data);
+
           navigate("/");
         } else {
           console.log("Login failed");
         }
       } catch (error) {
-        console.error(error);
+        console.error("Login failed:", error);
       }
     },
   });

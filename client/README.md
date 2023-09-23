@@ -78,71 +78,73 @@ Welcome to BAKE Street, the Online Cake Ordering Website documentation. This web
 Table of Contents
 
 1. Getting Started
-    Prerequisites
-    Installation
-    Running the Application
+   Prerequisites
+   Installation
+   Running the Application
 
 2. User Features
-     User authentication
-     Browsing Cakes
-     Adding Cakes to Cart
-     Managing the Cart
-     Simulated Checkout
+   User authentication
+   Browsing Cakes
+   Adding Cakes to Cart
+   Managing the Cart
+   Simulated Checkout
 
 3. Components Overview
-     Frontend Components
-     Backend Components
+   Frontend Components
+   Backend Components
 
- 1. Getting Started
+4. Getting Started
 
-  Prerequisites
-  Before you begin, ensure you have the following prerequisites installed on your system:
+Prerequisites
+Before you begin, ensure you have the following prerequisites installed on your system:
 
-  Node.js and npm (Node Package Manager)
-  MongoDB
+Node.js and npm (Node Package Manager)
+MongoDB
 
-  2. User Features
+2. User Features
 
-  User authentication:
-  User authentication is implemented using JSON Web Tokens (JWT) and cookies. JWT tokens are generated on the server after a successful login and stored in an HTTP-only secure cookie. Logout functionality will remove the `token` cookie from your browser.
+User authentication:
+User authentication is implemented using JSON Web Tokens (JWT) and cookies. JWT tokens are generated on the server after a successful login and stored in an HTTP-only secure cookie. Logout functionality will remove the `token` cookie from your browser.
 
-  Checking User Authentication
-  To check if a user is authenticated, follow the steps:
+Checking User Authentication
+To check if a user is authenticated, follow the steps:
 
-  Inspect Browser Cookies
+Inspect Browser Cookies
 
-   Open your web browser's developer tools and navigate to the "Application" or "Storage" tab, depending on your browser. Look for the cookies associated with your application's domain. You should see a cookie named token. 
+Open your web browser's developer tools and navigate to the "Application" or "Storage" tab, depending on your browser. Look for the cookies associated with your application's domain. You should see a cookie named token.
 
-   As a demo, use the following email and password.
-   
-    email: ivy@parkvill.com 
+As a demo, use the following email and password.
+
+    email: ivy@parkvill.com
     password: ivy25pa!2
 
-    Browsing Cakes
-   . Upon visiting the website, users can browse a variety of cakes.
-   . Cakes are categorized, and users can filter cakes by categories or search for specific cakes.
-   . Clicking on a cake displays its details, including description, available sizes, and price.
+Browsing Cakes
 
-    Adding Cakes to Cart
-   . Users can add cakes to their shopping cart by selecting a size and clicking the "Add to Cart" button on the cake detail page.
-   . The cart icon in the navigation bar displays the number of items in the cart.
+. Upon visiting the website, users can browse a variety of cakes.
+. Cakes are categorized, and users can filter cakes by categories or search for specific cakes.
+. Clicking on a cake displays its details, including description, available sizes, and price.
 
-   Managing the Cart
-   . Clicking on the cart icon in the navigation bar opens the cart page.
-   . Users can view the items in their cart, update quantities, and remove items.
-   . The total cost of items in the cart is displayed.
+Adding Cakes to Cart
 
-   Simulated Checkout
-   . Users can proceed to checkout from the cart page.
-   . They provide their information, shipping, and billing addresses.                                                             . Simulated payment information can be used (e.g., 4242 4242 4242 4242, any future date, any CVV).
-   . After "payment," users receive an order confirmation.
+. Users can add cakes to their shopping cart by selecting a size and clicking the "Add to Cart" button on the cake details page.
+. The cart icon in the navigation bar displays the number of items in the cart.
 
-   3. Components Overview
+Managing the Cart
+. Clicking on the cart icon in the navigation bar opens the cart page.
+. Users can view the items in their cart, update quantities, and remove items.
+. The total cost of items in the cart is displayed.
 
-     Frontend Components
-   . The frontend is built using React.js and includes components for navigation, cake listing, cart management, and order processing.
+Simulated Checkout
+. Users can proceed to checkout from the cart page.
+. They provide their information, shipping, and billing addresses. . Simulated payment information can be used (e.g., 4242 4242 4242 4242, any future date, any CVV).
+. After "payment," users receive an order confirmation.
 
-     Backend Components
-   . The backend is powered by Express.js and Node.js, with data stored in MongoDB. Key backend components include APIs for user management, cake management, cart management. 
+3.  Components Overview
+
+    Frontend Components
+    . The frontend is built using React.js and includes components for navigation, cake listing, cart management, and order processing.
+
+    Backend Components
+    . The backend is powered by Express.js and Node.js, with data stored in MongoDB. Key backend components include APIs for user management, cake management, cart management.
 
 This documentation provides an overview of the Online Cake Ordering Website, its features, and how to get started with it for learning full-stack development using the MERN stack.
