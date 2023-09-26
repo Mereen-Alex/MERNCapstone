@@ -36,9 +36,6 @@ const CakeCard = ({ cake }) => {
 
     const selectedPrice = cake.price[cake.sizes.indexOf(selectedSize)];
     setPrice(parseFloat(selectedPrice));
-    console.log(
-      `Price for selected size (${selectedSize}): Rs. ${selectedPrice}`
-    );
   };
 
   const handleDecreaseQuantity = () => {
@@ -61,7 +58,6 @@ const CakeCard = ({ cake }) => {
     };
     addToCart(cake.pid, selectedSize);
 
-    console.log("Selected Cake Details:");
     console.log(newCartItem);
 
     toast.success("Added cake successfully!");

@@ -44,15 +44,11 @@ const registerUser = asyncHandler(async (req, res, next) => {
 const loginUser = asyncHandler(async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    console.log("Login Request Data:", req.body);
-
 
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: "Incorrect password or email" });
     }
-    console.log("Retrieved User:", user);
-
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
@@ -69,7 +65,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
       expires: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days
     });
 
-    res.status(201).json({
+    res.status(200).json({
       _id: user._id,
       username: user.username,
       email: user.email,

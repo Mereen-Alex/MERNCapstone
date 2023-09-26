@@ -16,7 +16,8 @@ const __filename = new URL(import.meta.url).pathname;
 const __dirname = path.dirname(__filename);
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://mernbakestreet.web.app",
+  methods: 'GET,HEAD,PUT,POST,DELETE',
   credentials: true,
 };
 

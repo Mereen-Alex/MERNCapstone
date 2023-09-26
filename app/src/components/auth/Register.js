@@ -40,8 +40,7 @@ const Register = () => {
         }
         console.log("Registered successfully! Please login.");
 
-        toast.success("Registered successfully! Please login.");
-        console.log(response.data);
+        toast.success("Registered successfully! Please login.");        
 
         navigate("/login");
       } catch (error) {

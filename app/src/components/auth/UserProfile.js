@@ -48,8 +48,7 @@ const UserProfile = () => {
           values
         );
         console.log("Form successfully submitted!");
-        toast.success("Profile form submitted successfully!");
-        console.log(response.data);
+        toast.success("Profile form submitted successfully!");        
 
         navigate("/");
       } catch (error) {
