@@ -14,13 +14,10 @@ const registerUser = asyncHandler(async (req, res, next) => {
       return;
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     const user = await User.create({
       username,
       email,
-      password: hashedPassword,
+      password,
     });
 
     const token = generateToken(user._id);
