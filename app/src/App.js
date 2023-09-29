@@ -16,7 +16,7 @@ import CartDetailsView from "./components/cart/CartDetailsView";
 import CartItemList from "./components/cart/CartItemList";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import PaymentForm from "./components/checkout/PaymentForm";
+import PaymentForms from "./components/checkout/PaymentForms";
 import BillPay from "./components/checkout/BillPay";
 
 const App = () => {
@@ -35,7 +35,7 @@ const App = () => {
         <Route path="/cartdetails" element={<CartDetailsView />} />
         <Route path="/cartitems" element={<CartItemList />} />
         <Route path="/about" element={<AboutUsPage />} />
-        <Route path="/paymentform" element={<PaymentForm />} />
+        <Route path="/paymentforms" element={<PaymentForms />} />
         <Route path="/billpay" element={<BillPay />} />
       </Routes>
       <ToastContainer />

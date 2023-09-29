@@ -121,7 +121,7 @@ const CartDetailsView = () => {
           variant="contained"
           color="primary"
           component={Link}
-          to="/paymentform"
+          to="/paymentforms"
         >
           Proceed to Checkout
         </Button>
